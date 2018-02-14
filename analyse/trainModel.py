@@ -1,7 +1,9 @@
+from datetime import datetime
 import pandas as pd
 from pyspark.ml.evaluation import RegressionEvaluator
 from pyspark.ml.regression import GBTRegressor, RandomForestRegressor, GeneralizedLinearRegression, IsotonicRegression, \
     DecisionTreeRegressor
+import numpy as np
 from analyse.InitData import initData
 """
     GBT(梯度下降树模型)
@@ -18,7 +20,7 @@ from analyse.InitData import initData
 
 
 def train(algorithm,trainData,labelCol):
-    gbt=algorithm(labelCol=labelCol,maxDepth=15,maxIter=30,featuresCol='features')
+    gbt=algorithm(labelCol=labelCol,maxDepth=20,maxIter=30,featuresCol='features')
     model=gbt.fit(trainData)
     return model
 
@@ -53,6 +55,19 @@ def scanBest():
     # with open(r'../evaluate/GBTmodel', 'a') as f:
     #     f.write(str([evaluateModel(model,trainData,'total_purchase_amt') for model in models]))
     # 结果显示,GBT拟合效果较好
+def getResult():
+    pass
+    # result=pd.DataFrame()
+    # predict_columns=['consume_amt','direct_purchase_amt','share_amt', 'transfer_amt']
+    # for name in predict_columns:
+    #     model=train(algorithm,dataObj.balanceData,name)
+    #     prediction=model.transform(dataObj.predict_interest)
+    #     result[name]=prediction.select('prediction').toPandas()['prediction'].values
+    # result['total_purchase_amt']=result['direct_purchase_amt']+result['share_amt']
+    # result['total_redeem_amt']=result['consume_amt']+result['transfer_amt']
+    # result.index = pd.date_range(start=datetime.strptime('20140829', '%Y%m%d'), periods=32)
+    # result[['total_purchase_amt','total_redeem_amt']].to_csv(r'../result/seventh_tc_comp_predict_table.csv')
+
 
 if __name__=='__main__':
 
@@ -79,4 +94,5 @@ if __name__=='__main__':
     result_yBalance=model.transform(dataObj.predict_interest)
     # 将申购和赎回联合
     result=join_result(result_tBalance,result_yBalance)
-    result.to_csv(r'../result/tc_comp_predict_table.csv',index=False)
+    result.to_csv(r'../result/nine_tc_comp_predict_table.csv',index=False)
+

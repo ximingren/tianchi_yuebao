@@ -65,7 +65,7 @@ def draw_acf_pacf(data,column):
 def func1(data,order):
     global model
     model = ARMA(data, order=order).fit(disp=0)
-    predict_sunspots = model.forecast(steps=32)[0]
+    predict_sunspots = model.forecast(steps=35)[0]
     return predict_sunspots
 
 
@@ -75,7 +75,7 @@ def func2(data,order):
     first = data.iloc[0]
     data = data.diff(1).iloc[1:]
     model = ARMA(data, order=order).fit(disp=0)
-    predict_sunspots = model.forecast(steps=32)[0]
+    predict_sunspots = model.forecast(steps=35)[0]
     result = np.append(np.array([first]), predict_sunspots).cumsum()
     return result[1:]
 
@@ -98,12 +98,25 @@ def predict(data,column):
                }
     order=orders[column][0]
     func=orders[column][1]
-    return func(data,order)
+    result=func(data,order)
+    for t in range(len(result)):
+        result[t]=("%.3f" % result[t])
+    return result
+
+    # first = data.iloc[0]
+    # data = data.diff(1).iloc[1:]
+    # model = ARMA(data, order=(1,1)).fit(disp=0)
+    # # predict_sunspots = model.forecast(steps=35)[0]
+    # # result = np.append(np.array([first]), predict_sunspots).cumsum()
+    # # for t in range(len(result)):
+    # #     result[t]=("%.3f" % result[t])
+    # #
+    # # return result[1:]
 
     # forecast返回3个值的列表,第一个是预测的值，第二个是预测值的标准差，第三个是预测系数
 
     # 模型的残差
-    resid=model.resid
+    # resid=model.resid
 
     # D-W检验，结果均接近2，表明不存在一阶自相关性
     # print(durbin_watson(model.resid.values))
@@ -186,5 +199,5 @@ if __name__=='__main__':
         # 预测数值
         result[column]=predict(date_interest.iloc[:,i],column)
     # 设置索引
-    result.index=pd.date_range(start=datetime.strptime('20140829', '%Y%m%d'), periods=32)
-    result.to_csv(r'../analyed_data/predict_interest.csv')
+    result.index=pd.date_range(start=datetime.strptime('20140829', '%Y%m%d'), periods=35)
+    result.to_csv(r'../analyed_data/fourth_predict_interest.csv')

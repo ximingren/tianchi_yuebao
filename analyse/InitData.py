@@ -19,9 +19,12 @@ class initData(object):
 
         self.data = spark.createDataFrame(self.rawdata)
         # 用VectorAssembler来将多个列合并成一个列
+        # vecAssembler = VectorAssembler(
+        #     inputCols=['mfd_daily_yield', 'mfd_7daily_yield', 'Interest_O_N', 'Interest_1_W', 'Interest_2_W',
+        #                'Interest_1_M', 'Interest_3_M', 'Interest_6_M', 'Interest_9_M', 'Interest_1_Y'],
+        #     outputCol='features')
         vecAssembler = VectorAssembler(
-            inputCols=['mfd_daily_yield', 'mfd_7daily_yield', 'Interest_O_N', 'Interest_1_W', 'Interest_2_W',
-                       'Interest_1_M', 'Interest_3_M', 'Interest_6_M', 'Interest_9_M', 'Interest_1_Y'],
+            inputCols=['Interest_3_M', 'Interest_6_M', 'Interest_9_M', 'Interest_1_Y'],
             outputCol='features')
         self.balanceData=vecAssembler.transform(self.data)
         # 利用PCA降维
@@ -31,11 +34,14 @@ class initData(object):
         # self.balanceData=balancePCA.transform(self.FeatureData)
 
     def createInterestVector(self):
-        self.predict_interest=pd.read_csv(r'../analyed_data/predict_interest.csv',parse_dates=['report_date'])
+        self.predict_interest=pd.read_csv(r'../analyed_data/fourth_predict_interest.csv',parse_dates=['report_date'])
         self.predict_interest = spark.createDataFrame(self.predict_interest)
+        # vecAssembler = VectorAssembler(
+        #     inputCols=['mfd_daily_yield', 'mfd_7daily_yield', 'Interest_O_N', 'Interest_1_W', 'Interest_2_W',
+        #                'Interest_1_M', 'Interest_3_M', 'Interest_6_M', 'Interest_9_M', 'Interest_1_Y'],
+        #     outputCol='features')
         vecAssembler = VectorAssembler(
-            inputCols=['mfd_daily_yield', 'mfd_7daily_yield', 'Interest_O_N', 'Interest_1_W', 'Interest_2_W',
-                       'Interest_1_M', 'Interest_3_M', 'Interest_6_M', 'Interest_9_M', 'Interest_1_Y'],
+            inputCols=[ 'Interest_3_M', 'Interest_6_M', 'Interest_9_M', 'Interest_1_Y'],
             outputCol='features')
         self.predict_interest = vecAssembler.transform(self.predict_interest)
         # pca = PCA(k=4, inputCol='features', outputCol='pca_features')
